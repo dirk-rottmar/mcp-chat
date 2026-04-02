@@ -14,6 +14,9 @@ spring:
             profiles-generator-mcp-sse:
               url: http://localhost:8085
               sse-endpoint: /sse
+            date-time-mcp-sse:
+              url: http://localhost:8086
+              sse-endpoint: /sse
 
 logging:
   level:
