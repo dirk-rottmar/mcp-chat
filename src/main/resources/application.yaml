@@ -17,6 +17,9 @@ spring:
             date-time-mcp-sse:
               url: http://localhost:8086
               sse-endpoint: /sse
+            math-tool-mcp-sse:
+              url: http://localhost:8087
+              sse-endpoint: /sse
 
 logging:
   level:
