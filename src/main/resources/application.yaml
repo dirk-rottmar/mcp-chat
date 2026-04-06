@@ -5,24 +5,30 @@ spring:
       chat:
         options:
           model: gpt-oss:20b
+#          model: gpt-oss:20b-cloud
           keep-alive: 1h
           temperature: 0.7
     mcp:
       client:
         enabled: false
-        sse:
-          connections:
-            profiles-generator-mcp-sse:
-              url: http://localhost:8085
-              sse-endpoint: /sse
-            date-time-mcp-sse:
-              url: http://localhost:8086
-              sse-endpoint: /sse
-            math-tool-mcp-sse:
-              url: http://localhost:8087
-              sse-endpoint: /sse
+####### temporarily moved to McpClientConfig.java
+#        sse:
+#          connections:
+#            profiles-generator-mcp-sse:
+#              url: http://localhost:8085
+#              sse-endpoint: /sse
+#            date-time-mcp-sse:
+#              url: http://localhost:8086
+#              sse-endpoint: /sse
+#            math-tool-mcp-sse:
+#              url: http://localhost:8087
+#              sse-endpoint: /sse
+#            rag-mcp-sse:
+#              url: http://localhost:8088
+#              sse-endpoint: /sse
+####### temporarily moved to McpClientConfig.java
 
 logging:
   level:
-    org.springframework.ai: DEBUG
-    io.modelcontextprotocol: DEBUG
+    org.springframework.ai: INFO
+    io.modelcontextprotocol: INFO
