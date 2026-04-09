@@ -11,7 +11,7 @@ spring:
     mcp:
       client:
         enabled: false
-####### temporarily moved to McpClientConfig.java
+####### temporarily moved ConfigurationProperties(prefix = "mcp")
 #        sse:
 #          connections:
 #            profiles-generator-mcp-sse:
@@ -32,3 +32,18 @@ logging:
   level:
     org.springframework.ai: INFO
     io.modelcontextprotocol: INFO
+
+mcp:
+  servers:
+    - name: "profiles-generator"
+      url: "http://localhost:8085"
+      endpoint: "/sse"
+    - name: "date-time"
+      url: "http://localhost:8086"
+      endpoint: "/sse"
+    - name: "math-tool"
+      url: "http://localhost:8087"
+      endpoint: "/sse"
+    - name: "rag"
+      url: "http://localhost:8088"
+      endpoint: "/sse"

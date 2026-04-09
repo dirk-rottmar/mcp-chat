@@ -6,6 +6,7 @@ import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,11 +15,18 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Configuration
+@ConfigurationProperties(prefix = "mcp")
 public class McpClientConfig {
 
     private static final Logger log = LoggerFactory.getLogger(McpClientConfig.class);
+
+    // list will be populated via yaml config
+    private List<ServerConfig> servers = new ArrayList<>();
+
+    public void setServers(List<ServerConfig> servers) {
+        this.servers = servers;
+    }
 
     @Bean
     public SyncMcpToolCallbackProvider toolCallbackProvider(List<McpSyncClient> mcpSyncClients) {
@@ -27,22 +35,21 @@ public class McpClientConfig {
 
     @Bean
     public List<McpSyncClient> mcpSyncClients() {
-        List<ServerConfig> servers = List.of(
-                new ServerConfig("profiles-generator", "http://localhost:8085"),
-                new ServerConfig("date-time", "http://localhost:8086"),
-                new ServerConfig("math-tool", "http://localhost:8087"),
-                new ServerConfig("rag", "http://localhost:8088")
-        );
-
         List<McpSyncClient> clients = new ArrayList<>();
+
+        if (servers.isEmpty()) {
+            log.warn("⚠️ Could not find MCP-Server-Configuration in application*.yaml.");
+            return clients;
+        }
+
         for (ServerConfig s : servers) {
             try {
                 var httpClient = HttpClient.newBuilder()
-                        .connectTimeout(Duration.ofSeconds(3))  // ← neu
+                        .connectTimeout(Duration.ofSeconds(3))
                         .build();
 
                 var transport = HttpClientSseClientTransport.builder(s.url())
-                        .sseEndpoint("/sse")
+                        .sseEndpoint(s.endpoint())
                         .build();
 
                 var client = McpClient.sync(transport)
@@ -52,13 +59,15 @@ public class McpClientConfig {
 
                 client.initialize();
                 clients.add(client);
-                log.info("✅ Connected to MCP Server: {}", s.name());
+                log.info("✅ Connected to MCP Server: {} ({}{})", s.name(), s.url(), s.endpoint());
 
             } catch (Exception e) {
-                log.warn("⚠️ MCP Server not reachable, will be skipped: {}", s.name());
+                log.warn("⚠️ MCP Server '{}' not reachable: {} ({}{})", s.name(), e.getMessage(), s.url(), s.endpoint());
             }
         }
         return clients;
     }
-    record ServerConfig(String name, String url) {}
+
+    // Extended Record for mapping
+    public record ServerConfig(String name, String url, String endpoint) {}
 }

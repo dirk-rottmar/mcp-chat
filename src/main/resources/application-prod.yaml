@@ -1,0 +1,19 @@
+spring:
+  ai:
+    ollama:
+      base-url: http://host.docker.internal:11434
+
+mcp:
+  servers:
+    - name: "profiles-generator"
+      url: "http://host.docker.internal:8085"
+      endpoint: "/sse"
+    - name: "date-time"
+      url: "http://host.docker.internal:8086"
+      endpoint: "/sse"
+    - name: "math-tool"
+      url: "http://host.docker.internal:8087"
+      endpoint: "/sse"
+    - name: "rag"
+      url: "http://host.docker.internal:8088"
+      endpoint: "/sse"
